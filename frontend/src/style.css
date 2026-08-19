@@ -1,0 +1,88 @@
+:root {
+    --bg: #1b2636;
+    --panel-bg: rgba(0, 0, 0, 0.55);
+    --panel-fg: #e6edf3;
+    --accent: #4d9de0;
+}
+
+html,
+body {
+    margin: 0;
+    height: 100%;
+    background-color: var(--bg);
+    color: var(--panel-fg);
+    font-family: system-ui, "Segoe UI", sans-serif;
+    overflow: hidden;
+}
+
+#app,
+#scene {
+    width: 100%;
+    height: 100%;
+}
+
+#scene canvas {
+    display: block;
+}
+
+#debug-panel {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    max-width: 420px;
+    padding: 12px;
+    border: 1px dashed var(--accent);
+    border-radius: 6px;
+    background: var(--panel-bg);
+    font-size: 13px;
+}
+
+#debug-panel h2 {
+    margin: 0 0 8px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+#debug-panel .buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+#debug-panel button {
+    padding: 5px 10px;
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--panel-fg);
+    cursor: pointer;
+    font-size: 12px;
+}
+
+#debug-panel button:hover {
+    background: var(--accent);
+}
+
+#debug-panel select {
+    padding: 4px;
+    background: transparent;
+    color: var(--panel-fg);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+#debug-panel pre {
+    max-height: 240px;
+    margin: 0;
+    overflow: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 11px;
+}
+
+#debug-panel pre.error {
+    color: #ff7b72;
+}
