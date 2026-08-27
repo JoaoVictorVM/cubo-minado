@@ -86,3 +86,13 @@ body {
 #debug-panel pre.error {
     color: #ff7b72;
 }
+
+#debug-panel input {
+    width: 80px;
+    padding: 4px;
+    background: transparent;
+    color: var(--panel-fg);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    font-size: 12px;
+}

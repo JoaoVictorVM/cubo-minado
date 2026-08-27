@@ -4,6 +4,7 @@ import {
   GetBestTimes,
   NewGame,
   OpenCell,
+  SubmitTime,
 } from '../wailsjs/go/main/App';
 
 const DIFFICULTIES = ['easy', 'medium', 'hard'] as const;
@@ -22,11 +23,16 @@ export function mountDebugPanel(container: HTMLElement): void {
       <button id="debug-chord-cell" type="button">ChordCell</button>
       <button id="debug-best-times" type="button">GetBestTimes</button>
     </div>
+    <div class="buttons">
+      <input id="debug-seconds" type="number" min="0" step="1" value="60" />
+      <button id="debug-submit-time" type="button">SubmitTime</button>
+    </div>
     <pre id="debug-output">Nenhuma chamada ainda.</pre>
   `;
 
   const output = container.querySelector('#debug-output') as HTMLPreElement;
   const difficulty = container.querySelector('#debug-difficulty') as HTMLSelectElement;
+  const seconds = container.querySelector('#debug-seconds') as HTMLInputElement;
 
   const invoke = async (label: string, call: () => Promise<unknown>) => {
     output.classList.remove('error');
@@ -51,4 +57,7 @@ export function mountDebugPanel(container: HTMLElement): void {
   bind('debug-flag-cell', 'FlagCell', () => FlagCell(0, 0, 0));
   bind('debug-chord-cell', 'ChordCell', () => ChordCell(0, 0, 0));
   bind('debug-best-times', 'GetBestTimes', () => GetBestTimes());
+  bind('debug-submit-time', 'SubmitTime', () =>
+    SubmitTime(difficulty.value, Number.parseInt(seconds.value, 10)),
+  );
 }
