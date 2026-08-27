@@ -91,13 +91,3 @@ func TestChordCellReturnsNotImplemented(t *testing.T) {
 		t.Errorf("ChordCell returned %v, want %v", err, ErrNotImplemented)
 	}
 }
-
-func TestGetBestTimesReturnsAllNil(t *testing.T) {
-	times, err := GetBestTimes()
-	if err != nil {
-		t.Fatalf("GetBestTimes returned error: %v", err)
-	}
-	if times.Easy != nil || times.Medium != nil || times.Hard != nil {
-		t.Errorf("GetBestTimes = %+v, want all nil", times)
-	}
-}

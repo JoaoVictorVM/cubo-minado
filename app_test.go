@@ -8,7 +8,16 @@ import (
 	"cubo-minado/internal/game"
 )
 
+func useTempConfigDir(t *testing.T) {
+	t.Helper()
+	dir := t.TempDir()
+	t.Setenv("AppData", dir)
+	t.Setenv("XDG_CONFIG_HOME", dir)
+}
+
 func TestAppBindingsDelegateToGame(t *testing.T) {
+	useTempConfigDir(t)
+
 	app := NewApp()
 
 	for _, difficulty := range []string{"easy", "medium", "hard"} {
@@ -48,5 +57,28 @@ func TestAppBindingsDelegateToGame(t *testing.T) {
 	wantTimes, _ := game.GetBestTimes()
 	if !reflect.DeepEqual(gotTimes, wantTimes) {
 		t.Errorf("App.GetBestTimes = %+v, want %+v", gotTimes, wantTimes)
+	}
+}
+
+func TestAppSubmitTimeDelegatesToGame(t *testing.T) {
+	useTempConfigDir(t)
+
+	app := NewApp()
+
+	got, err := app.SubmitTime("medium", 87)
+	if err != nil {
+		t.Fatalf("App.SubmitTime returned error: %v", err)
+	}
+	want, _ := game.SubmitTime(game.DifficultyMedium, 87)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("App.SubmitTime = %+v, want %+v", got, want)
+	}
+
+	if _, err := app.SubmitTime("impossible", 87); !errors.Is(err, game.ErrInvalidDifficulty) {
+		t.Errorf("App.SubmitTime with invalid difficulty returned %v, want %v", err, game.ErrInvalidDifficulty)
+	}
+
+	if _, err := app.SubmitTime("medium", -1); !errors.Is(err, game.ErrInvalidTime) {
+		t.Errorf("App.SubmitTime with negative seconds returned %v, want %v", err, game.ErrInvalidTime)
 	}
 }
