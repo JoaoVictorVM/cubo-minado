@@ -11,3 +11,5 @@ export function GetBestTimes():Promise<game.BestTimes>;
 export function NewGame(arg1:string):Promise<game.BoardState>;
 
 export function OpenCell(arg1:number,arg2:number,arg3:number):Promise<game.BoardState>;
+
+export function SubmitTime(arg1:string,arg2:number):Promise<game.BestTimes>;

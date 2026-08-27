@@ -41,3 +41,7 @@ func (a *App) ChordCell(face, row, col int) (*game.BoardState, error) {
 func (a *App) GetBestTimes() (*game.BestTimes, error) {
 	return game.GetBestTimes()
 }
+
+func (a *App) SubmitTime(difficulty string, seconds int) (*game.BestTimes, error) {
+	return game.SubmitTime(game.Difficulty(difficulty), seconds)
+}

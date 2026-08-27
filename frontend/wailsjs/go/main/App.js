@@ -21,3 +21,7 @@ export function NewGame(arg1) {
 export function OpenCell(arg1, arg2, arg3) {
   return window['go']['main']['App']['OpenCell'](arg1, arg2, arg3);
 }
+
+export function SubmitTime(arg1, arg2) {
+  return window['go']['main']['App']['SubmitTime'](arg1, arg2);
+}
