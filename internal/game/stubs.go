@@ -1,12 +1,5 @@
 package game
 
-import "errors"
-
-var (
-	ErrInvalidDifficulty = errors.New("ERR_INVALID_DIFFICULTY")
-	ErrNotImplemented    = errors.New("ERR_NOT_IMPLEMENTED")
-)
-
 func NewGame(difficulty Difficulty) (*BoardState, error) {
 	size, ok := BoardSizeForDifficulty(difficulty)
 	if !ok {
@@ -48,8 +41,4 @@ func FlagCell(face, row, col int) (*BoardState, error) {
 
 func ChordCell(face, row, col int) (*BoardState, error) {
 	return nil, ErrNotImplemented
-}
-
-func GetBestTimes() (*BestTimes, error) {
-	return &BestTimes{Easy: nil, Medium: nil, Hard: nil}, nil
 }

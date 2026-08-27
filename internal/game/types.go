@@ -1,5 +1,13 @@
 package game
 
+import "errors"
+
+var (
+	ErrInvalidDifficulty = errors.New("ERR_INVALID_DIFFICULTY")
+	ErrNotImplemented    = errors.New("ERR_NOT_IMPLEMENTED")
+	ErrInvalidTime       = errors.New("ERR_INVALID_TIME")
+)
+
 type Difficulty string
 
 const (
