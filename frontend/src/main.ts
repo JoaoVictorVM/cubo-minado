@@ -12,10 +12,10 @@ if (!sceneContainer || !menuContainer || !statusContainer || !debugContainer) {
   throw new Error('Elementos de montagem não encontrados no index.html');
 }
 
-mountAppShell({
+const shell = mountAppShell({
   menu: menuContainer,
   scene: sceneContainer,
   status: statusContainer,
 });
 
-mountDebugPanel(debugContainer);
+mountDebugPanel(debugContainer, shell);
