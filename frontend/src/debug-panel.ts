@@ -11,7 +11,10 @@ const DIFFICULTIES = ['easy', 'medium', 'hard'] as const;
 
 export function mountDebugPanel(container: HTMLElement): void {
   container.innerHTML = `
-    <h2>Debug — bindings (temporário)</h2>
+    <button class="debug-toggle" type="button" id="debug-toggle" aria-expanded="false">
+      Debug — bindings (temporário)
+    </button>
+    <div class="debug-body">
     <div class="buttons">
       <select id="debug-difficulty">
         ${DIFFICULTIES.map((d) => `<option value="${d}">${d}</option>`).join('')}
@@ -28,7 +31,15 @@ export function mountDebugPanel(container: HTMLElement): void {
       <button id="debug-submit-time" type="button">SubmitTime</button>
     </div>
     <pre id="debug-output">Nenhuma chamada ainda.</pre>
+    </div>
   `;
+
+  container.classList.add('collapsed');
+  const toggle = container.querySelector('#debug-toggle') as HTMLButtonElement;
+  toggle.addEventListener('click', () => {
+    const collapsed = container.classList.toggle('collapsed');
+    toggle.setAttribute('aria-expanded', String(!collapsed));
+  });
 
   const output = container.querySelector('#debug-output') as HTMLPreElement;
   const difficulty = container.querySelector('#debug-difficulty') as HTMLSelectElement;
