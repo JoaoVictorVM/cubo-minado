@@ -1,40 +1,72 @@
 import {
-  BoxGeometry,
-  Mesh,
-  MeshStandardMaterial,
-  PerspectiveCamera,
-  DirectionalLight,
   AmbientLight,
+  DirectionalLight,
+  PerspectiveCamera,
   Scene,
   WebGLRenderer,
 } from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-export interface PlaceholderScene {
+import type { RenderBoard } from './cell-materials';
+import { buildCube, type CubeMeshes } from './cube-geometry';
+import { createHoverHighlight } from './hover-highlight';
+
+const MIN_ZOOM_DISTANCE = 2.2;
+const MAX_ZOOM_DISTANCE = 9;
+
+export interface CubeScene {
   start(): void;
+  setBoard(board: RenderBoard): void;
   dispose(): void;
 }
 
-export function createPlaceholderScene(container: HTMLElement): PlaceholderScene {
+export function createCubeScene(container: HTMLElement, board: RenderBoard): CubeScene {
   const scene = new Scene();
 
-  const camera = new PerspectiveCamera(60, 1, 0.1, 100);
-  camera.position.set(2.5, 2.5, 3.5);
-  camera.lookAt(0, 0, 0);
+  const camera = new PerspectiveCamera(50, 1, 0.1, 100);
+  camera.position.set(2.6, 2.4, 3.4);
 
   const renderer = new WebGLRenderer({ antialias: true });
-  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   container.appendChild(renderer.domElement);
 
-  scene.add(new AmbientLight(0xffffff, 0.6));
-  const keyLight = new DirectionalLight(0xffffff, 1.2);
-  keyLight.position.set(3, 4, 5);
+  scene.add(new AmbientLight(0xffffff, 1.5));
+
+  const keyLight = new DirectionalLight(0xffffff, 1.6);
+  keyLight.position.set(4, 6, 5);
   scene.add(keyLight);
 
-  const cube = new Mesh(
-    new BoxGeometry(2, 2, 2),
-    new MeshStandardMaterial({ color: 0x4d9de0, roughness: 0.4, metalness: 0.1 }),
-  );
-  scene.add(cube);
+  const rimLight = new DirectionalLight(0xffffff, 0.7);
+  rimLight.position.set(-5, -3, -4);
+  scene.add(rimLight);
+
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enablePan = false;
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.rotateSpeed = 0.75;
+  controls.zoomSpeed = 0.8;
+  controls.minDistance = MIN_ZOOM_DISTANCE;
+  controls.maxDistance = MAX_ZOOM_DISTANCE;
+  controls.target.set(0, 0, 0);
+  controls.update();
+
+  const hover = createHoverHighlight(renderer.domElement, camera);
+
+  let cube: CubeMeshes | null = null;
+
+  const mountBoard = (next: RenderBoard) => {
+    if (cube) {
+      hover.setTargets([]);
+      scene.remove(cube.group);
+      cube.dispose();
+    }
+    cube = buildCube(next);
+    scene.add(cube.group);
+    hover.setTargets(cube.raycastTargets);
+  };
+
+  mountBoard(board);
 
   const resize = () => {
     const width = container.clientWidth || 1;
@@ -50,23 +82,32 @@ export function createPlaceholderScene(container: HTMLElement): PlaceholderScene
 
   const renderLoop = () => {
     frameId = requestAnimationFrame(renderLoop);
-    cube.rotation.x += 0.005;
-    cube.rotation.y += 0.008;
+    controls.update();
+    hover.update();
     renderer.render(scene, camera);
   };
 
   return {
     start() {
       if (frameId === 0) {
+        resize();
         renderLoop();
       }
+    },
+    setBoard(next) {
+      mountBoard(next);
     },
     dispose() {
       cancelAnimationFrame(frameId);
       frameId = 0;
       window.removeEventListener('resize', resize);
-      cube.geometry.dispose();
-      (cube.material as MeshStandardMaterial).dispose();
+      hover.dispose();
+      controls.dispose();
+      if (cube) {
+        scene.remove(cube.group);
+        cube.dispose();
+        cube = null;
+      }
       renderer.dispose();
       renderer.domElement.remove();
     },
