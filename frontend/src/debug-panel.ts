@@ -6,10 +6,16 @@ import {
   OpenCell,
   SubmitTime,
 } from '../wailsjs/go/main/App';
+import { buildCellStatePreviewBoard } from './three/preview-board';
+import type { RenderBoard } from './three/cell-materials';
 
 const DIFFICULTIES = ['easy', 'medium', 'hard'] as const;
 
-export function mountDebugPanel(container: HTMLElement): void {
+export interface DebugPanelHooks {
+  showBoard(board: RenderBoard, label: string): void;
+}
+
+export function mountDebugPanel(container: HTMLElement, hooks: DebugPanelHooks): void {
   container.innerHTML = `
     <button class="debug-toggle" type="button" id="debug-toggle" aria-expanded="false">
       Debug — bindings (temporário)
@@ -29,6 +35,9 @@ export function mountDebugPanel(container: HTMLElement): void {
     <div class="buttons">
       <input id="debug-seconds" type="number" min="0" step="1" value="60" />
       <button id="debug-submit-time" type="button">SubmitTime</button>
+    </div>
+    <div class="buttons">
+      <button id="debug-preview-cells" type="button">Prever estados das células</button>
     </div>
     <pre id="debug-output">Nenhuma chamada ainda.</pre>
     </div>
@@ -71,4 +80,12 @@ export function mountDebugPanel(container: HTMLElement): void {
   bind('debug-submit-time', 'SubmitTime', () =>
     SubmitTime(difficulty.value, Number.parseInt(seconds.value, 10)),
   );
+
+  const previewButton = container.querySelector('#debug-preview-cells') as HTMLButtonElement;
+  previewButton.addEventListener('click', () => {
+    const board = buildCellStatePreviewBoard();
+    hooks.showBoard(board, 'Prévia de estados');
+    output.classList.remove('error');
+    output.textContent = 'Prévia de estados renderizada na face frontal do cubo.';
+  });
 }
