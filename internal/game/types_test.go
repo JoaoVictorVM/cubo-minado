@@ -22,3 +22,24 @@ func TestBoardSizeForDifficulty(t *testing.T) {
 		}
 	}
 }
+
+func TestMinesForDifficulty(t *testing.T) {
+	cases := []struct {
+		difficulty Difficulty
+		want       int
+		wantOK     bool
+	}{
+		{DifficultyEasy, 15, true},
+		{DifficultyMedium, 40, true},
+		{DifficultyHard, 80, true},
+		{Difficulty("impossible"), 0, false},
+	}
+
+	for _, tc := range cases {
+		got, ok := MinesForDifficulty(tc.difficulty)
+		if got != tc.want || ok != tc.wantOK {
+			t.Errorf("MinesForDifficulty(%q) = (%d, %t), want (%d, %t)",
+				tc.difficulty, got, ok, tc.want, tc.wantOK)
+		}
+	}
+}
