@@ -1,13 +1,5 @@
 package game
 
-import "errors"
-
-var (
-	ErrInvalidDifficulty = errors.New("ERR_INVALID_DIFFICULTY")
-	ErrNotImplemented    = errors.New("ERR_NOT_IMPLEMENTED")
-	ErrInvalidTime       = errors.New("ERR_INVALID_TIME")
-)
-
 type Difficulty string
 
 const (
@@ -32,6 +24,7 @@ type Cell struct {
 	Col           int       `json:"col"`
 	State         CellState `json:"state"`
 	AdjacentMines int       `json:"adjacentMines"`
+	IsMine        bool      `json:"isMine"`
 }
 
 type Face struct {
@@ -58,6 +51,19 @@ func BoardSizeForDifficulty(difficulty Difficulty) (int, bool) {
 		return 7, true
 	case DifficultyHard:
 		return 9, true
+	default:
+		return 0, false
+	}
+}
+
+func MinesForDifficulty(difficulty Difficulty) (int, bool) {
+	switch difficulty {
+	case DifficultyEasy:
+		return 15, true
+	case DifficultyMedium:
+		return 40, true
+	case DifficultyHard:
+		return 80, true
 	default:
 		return 0, false
 	}

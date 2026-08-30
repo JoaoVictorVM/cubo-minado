@@ -1,9 +1,5 @@
 package game
 
-import "errors"
-
-var ErrInvalidBoardSize = errors.New("ERR_INVALID_BOARD_SIZE")
-
 type FaceID int
 
 const (
