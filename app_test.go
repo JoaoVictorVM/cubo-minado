@@ -35,19 +35,12 @@ func TestAppBindingsDelegateToGame(t *testing.T) {
 		t.Errorf("App.NewGame with invalid difficulty returned %v, want %v", err, game.ErrInvalidDifficulty)
 	}
 
-	gameplayBindings := map[string]func(int, int, int) (*game.BoardState, error){
-		"OpenCell":  app.OpenCell,
-		"FlagCell":  app.FlagCell,
-		"ChordCell": app.ChordCell,
+	board, err := app.ChordCell(0, 0, 0)
+	if board != nil {
+		t.Errorf("App.ChordCell returned a board: %+v", board)
 	}
-	for name, binding := range gameplayBindings {
-		board, err := binding(0, 0, 0)
-		if board != nil {
-			t.Errorf("App.%s returned a board: %+v", name, board)
-		}
-		if !errors.Is(err, game.ErrNotImplemented) {
-			t.Errorf("App.%s returned %v, want %v", name, err, game.ErrNotImplemented)
-		}
+	if !errors.Is(err, game.ErrNotImplemented) {
+		t.Errorf("App.ChordCell returned %v, want %v", err, game.ErrNotImplemented)
 	}
 
 	gotTimes, err := app.GetBestTimes()
@@ -80,5 +73,38 @@ func TestAppSubmitTimeDelegatesToGame(t *testing.T) {
 
 	if _, err := app.SubmitTime("medium", -1); !errors.Is(err, game.ErrInvalidTime) {
 		t.Errorf("App.SubmitTime with negative seconds returned %v, want %v", err, game.ErrInvalidTime)
+	}
+}
+
+func TestAppGameplayBindingsDelegateToGame(t *testing.T) {
+	useTempConfigDir(t)
+
+	app := NewApp()
+
+	if _, err := app.NewGame("easy"); err != nil {
+		t.Fatalf("App.NewGame returned error: %v", err)
+	}
+
+	opened, err := app.OpenCell(2, 2, 2)
+	if err != nil {
+		t.Fatalf("App.OpenCell returned error: %v", err)
+	}
+	if got := opened.Faces[2].Cells[2][2].State; got != game.CellStateOpen {
+		t.Errorf("App.OpenCell left the cell as %q, want %q", got, game.CellStateOpen)
+	}
+
+	flagged, err := app.FlagCell(0, 0, 0)
+	if err != nil {
+		t.Fatalf("App.FlagCell returned error: %v", err)
+	}
+	if got := flagged.Faces[0].Cells[0][0].State; got != game.CellStateFlagged {
+		t.Errorf("App.FlagCell left the cell as %q, want %q", got, game.CellStateFlagged)
+	}
+
+	if _, err := app.OpenCell(9, 0, 0); !errors.Is(err, game.ErrInvalidCell) {
+		t.Errorf("App.OpenCell with a bad face returned %v, want %v", err, game.ErrInvalidCell)
+	}
+	if _, err := app.FlagCell(0, 99, 0); !errors.Is(err, game.ErrInvalidCell) {
+		t.Errorf("App.FlagCell with a bad row returned %v, want %v", err, game.ErrInvalidCell)
 	}
 }

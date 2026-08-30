@@ -22,6 +22,7 @@ export namespace game {
 	    col: number;
 	    state: string;
 	    adjacentMines: number;
+	    isMine: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new Cell(source);
@@ -34,6 +35,7 @@ export namespace game {
 	        this.col = source["col"];
 	        this.state = source["state"];
 	        this.adjacentMines = source["adjacentMines"];
+	        this.isMine = source["isMine"];
 	    }
 	}
 	export class Face {
