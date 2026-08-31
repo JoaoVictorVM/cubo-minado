@@ -72,6 +72,8 @@ export namespace game {
 	    difficulty: string;
 	    boardSize: number;
 	    faces: Face[];
+	    result: string;
+	    endedAt?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new BoardState(source);
@@ -82,6 +84,8 @@ export namespace game {
 	        this.difficulty = source["difficulty"];
 	        this.boardSize = source["boardSize"];
 	        this.faces = this.convertValues(source["faces"], Face);
+	        this.result = source["result"];
+	        this.endedAt = source["endedAt"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

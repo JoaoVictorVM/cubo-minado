@@ -16,6 +16,14 @@ const (
 	CellStateFlagged CellState = "flagged"
 )
 
+type GameResult string
+
+const (
+	GameResultNone    GameResult = ""
+	GameResultVictory GameResult = "victory"
+	GameResultDefeat  GameResult = "defeat"
+)
+
 const FaceCount = 6
 
 type Cell struct {
@@ -35,6 +43,8 @@ type BoardState struct {
 	Difficulty Difficulty `json:"difficulty"`
 	BoardSize  int        `json:"boardSize"`
 	Faces      []Face     `json:"faces"`
+	Result     GameResult `json:"result"`
+	EndedAt    *int64     `json:"endedAt,omitempty"`
 }
 
 type BestTimes struct {
