@@ -7,6 +7,7 @@ import {
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
+import { createCellInput, type CellInput } from './cell-input';
 import type { RenderBoard } from './cell-materials';
 import { buildCube, type CubeMeshes } from './cube-geometry';
 import { createHoverHighlight } from './hover-highlight';
@@ -68,6 +69,8 @@ export function createCubeScene(container: HTMLElement, board: RenderBoard): Cub
 
   mountBoard(board);
 
+  const input: CellInput = createCellInput(renderer.domElement, hover, mountBoard);
+
   const resize = () => {
     const width = container.clientWidth || 1;
     const height = container.clientHeight || 1;
@@ -101,6 +104,7 @@ export function createCubeScene(container: HTMLElement, board: RenderBoard): Cub
       cancelAnimationFrame(frameId);
       frameId = 0;
       window.removeEventListener('resize', resize);
+      input.dispose();
       hover.dispose();
       controls.dispose();
       if (cube) {
