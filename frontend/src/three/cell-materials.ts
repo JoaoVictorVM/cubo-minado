@@ -30,8 +30,7 @@ const materialCache = new Map<string, MeshStandardMaterial>();
 export interface RenderCell {
   state: string;
   adjacentMines: number;
-  mine?: boolean;
-  triggered?: boolean;
+  isMine?: boolean;
 }
 
 export interface RenderFace {
@@ -136,10 +135,10 @@ export function appearanceKey(cell: RenderCell): string {
   if (cell.state === 'flagged') {
     return 'flagged';
   }
+  if (cell.isMine) {
+    return cell.state === 'open' ? 'mine-triggered' : 'mine-revealed';
+  }
   if (cell.state === 'open') {
-    if (cell.mine) {
-      return cell.triggered ? 'mine-triggered' : 'mine-revealed';
-    }
     if (cell.adjacentMines > 0) {
       return `number-${cell.adjacentMines}`;
     }

@@ -35,11 +35,11 @@ export function buildCellStatePreviewBoard(): RenderBoard {
     numberedCell(7),
     numberedCell(8),
     { state: 'flagged', adjacentMines: 0 },
-    { state: 'open', adjacentMines: 0, mine: true, triggered: true },
+    { state: 'open', adjacentMines: 0, isMine: true },
   ];
 
   front[2] = [
-    { state: 'open', adjacentMines: 0, mine: true },
+    { state: 'closed', adjacentMines: 0, isMine: true },
     { state: 'open', adjacentMines: 0 },
     closedCell(),
     { state: 'flagged', adjacentMines: 0 },
