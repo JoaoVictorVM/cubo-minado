@@ -1,10 +1,11 @@
 import { Mesh, Raycaster, Vector2, type Camera } from 'three';
 
-import { cellIdentityOf, setCellHighlighted } from './cube-geometry';
+import { cellIdentityOf, setCellHighlighted, type CellIdentity } from './cube-geometry';
 
 export interface HoverHighlight {
   setTargets(targets: Mesh[]): void;
   update(): void;
+  getHighlighted(): CellIdentity | null;
   clear(): void;
   dispose(): void;
 }
@@ -67,6 +68,9 @@ export function createHoverHighlight(
         setCellHighlighted(candidate, true);
         highlighted = candidate;
       }
+    },
+    getHighlighted() {
+      return highlighted ? cellIdentityOf(highlighted) ?? null : null;
     },
     clear: clearHighlight,
     dispose() {
