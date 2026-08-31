@@ -45,6 +45,10 @@ func OpenCell(face, row, col int) (*BoardState, error) {
 		return nil, err
 	}
 
+	if match.hasEnded() {
+		return match.board, nil
+	}
+
 	cell := match.cellAt(ref)
 	if cell.State != CellStateClosed {
 		return match.board, nil
@@ -64,6 +68,8 @@ func OpenCell(face, row, col int) (*BoardState, error) {
 		cell.AdjacentMines = match.countAdjacentMines(ref)
 	}
 
+	evaluateResult(match, ref)
+
 	return match.board, nil
 }
 
@@ -74,6 +80,10 @@ func FlagCell(face, row, col int) (*BoardState, error) {
 	match, ref, err := resolveAction(face, row, col)
 	if err != nil {
 		return nil, err
+	}
+
+	if match.hasEnded() {
+		return match.board, nil
 	}
 
 	cell := match.cellAt(ref)
