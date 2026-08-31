@@ -11,6 +11,10 @@ type matchState struct {
 	flagsPlaced int
 }
 
+func (m *matchState) hasEnded() bool {
+	return m.board.Result != GameResultNone
+}
+
 var (
 	matchMu      sync.Mutex
 	currentMatch *matchState
