@@ -67,6 +67,7 @@ function renderCard(option: DifficultyOption): string {
 }
 
 export interface MenuHandle {
+  show(): void;
   hide(): void;
 }
 
@@ -135,6 +136,10 @@ export function mountMenu(
   void loadBestTimes(container);
 
   return {
+    show() {
+      container.hidden = false;
+      void loadBestTimes(container);
+    },
     hide() {
       container.hidden = true;
     },
