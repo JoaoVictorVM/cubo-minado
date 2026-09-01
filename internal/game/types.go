@@ -44,6 +44,7 @@ type BoardState struct {
 	BoardSize  int        `json:"boardSize"`
 	Faces      []Face     `json:"faces"`
 	Result     GameResult `json:"result"`
+	StartedAt  *int64     `json:"startedAt,omitempty"`
 	EndedAt    *int64     `json:"endedAt,omitempty"`
 }
 

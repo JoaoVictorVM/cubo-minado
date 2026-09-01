@@ -73,6 +73,7 @@ export namespace game {
 	    boardSize: number;
 	    faces: Face[];
 	    result: string;
+	    startedAt?: number;
 	    endedAt?: number;
 	
 	    static createFrom(source: any = {}) {
@@ -85,6 +86,7 @@ export namespace game {
 	        this.boardSize = source["boardSize"];
 	        this.faces = this.convertValues(source["faces"], Face);
 	        this.result = source["result"];
+	        this.startedAt = source["startedAt"];
 	        this.endedAt = source["endedAt"];
 	    }
 	

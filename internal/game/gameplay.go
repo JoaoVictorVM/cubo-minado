@@ -57,6 +57,8 @@ func OpenCell(face, row, col int) (*BoardState, error) {
 	if !match.minesPlaced {
 		match.mines = placeMines(match.graph, match.board.BoardSize, match.totalMines, ref, newRandSource())
 		match.minesPlaced = true
+		startedAt := time.Now().Unix()
+		match.board.StartedAt = &startedAt
 	}
 
 	cell.State = CellStateOpen

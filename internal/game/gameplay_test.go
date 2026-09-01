@@ -3,6 +3,7 @@ package game
 import (
 	"errors"
 	"testing"
+	"time"
 )
 
 func forceMines(t *testing.T, mines ...CellRef) {
@@ -407,5 +408,92 @@ func TestFlagCellDoesNotPlaceMines(t *testing.T) {
 	}
 	if currentMatch.minesPlaced {
 		t.Error("flagging placed mines; only the first open should")
+	}
+}
+
+func TestNewGameStartsWithNilStartedAt(t *testing.T) {
+	board := startMatch(t, DifficultyEasy)
+
+	if board.StartedAt != nil {
+		t.Errorf("StartedAt = %d on a fresh match, want nil", *board.StartedAt)
+	}
+}
+
+func TestOpenCellSetsStartedAtOnFirstOpen(t *testing.T) {
+	startMatch(t, DifficultyEasy)
+
+	before := time.Now().Unix()
+	board, err := OpenCell(2, 2, 2)
+	if err != nil {
+		t.Fatalf("OpenCell returned error: %v", err)
+	}
+	after := time.Now().Unix()
+
+	if board.StartedAt == nil {
+		t.Fatal("StartedAt is nil after the first open")
+	}
+	if *board.StartedAt < before || *board.StartedAt > after {
+		t.Errorf("StartedAt = %d, want between %d and %d", *board.StartedAt, before, after)
+	}
+}
+
+func TestOpenCellDoesNotResetStartedAtOnSubsequentOpens(t *testing.T) {
+	startMatch(t, DifficultyEasy)
+
+	first, err := OpenCell(2, 2, 2)
+	if err != nil {
+		t.Fatalf("first OpenCell returned error: %v", err)
+	}
+	if first.StartedAt == nil {
+		t.Fatal("StartedAt is nil after the first open")
+	}
+	started := *first.StartedAt
+
+	forceMines(t, CellRef{FaceBack, 0, 0})
+
+	second, err := OpenCell(2, 0, 0)
+	if err != nil {
+		t.Fatalf("second OpenCell returned error: %v", err)
+	}
+	if second.StartedAt == nil {
+		t.Fatal("StartedAt became nil after the second open")
+	}
+	if *second.StartedAt != started {
+		t.Errorf("StartedAt changed from %d to %d on a later open", started, *second.StartedAt)
+	}
+}
+
+func TestFlagCellDoesNotSetStartedAt(t *testing.T) {
+	startMatch(t, DifficultyEasy)
+
+	board, err := FlagCell(0, 0, 0)
+	if err != nil {
+		t.Fatalf("FlagCell returned error: %v", err)
+	}
+	if board.StartedAt != nil {
+		t.Errorf("StartedAt = %d after flagging, want nil", *board.StartedAt)
+	}
+
+	if _, err := FlagCell(0, 0, 0); err != nil {
+		t.Fatalf("unflag returned error: %v", err)
+	}
+	if currentMatch.board.StartedAt != nil {
+		t.Error("unflagging set StartedAt")
+	}
+}
+
+func TestRejectedOpenDoesNotStartTheClock(t *testing.T) {
+	startMatch(t, DifficultyEasy)
+
+	if _, err := FlagCell(2, 2, 2); err != nil {
+		t.Fatalf("FlagCell returned error: %v", err)
+	}
+
+	board, err := OpenCell(2, 2, 2)
+	if err != nil {
+		t.Fatalf("OpenCell returned error: %v", err)
+	}
+	if board.StartedAt != nil {
+		t.Errorf("StartedAt = %d after a rejected open, want nil", *board.StartedAt)
 	}
 }
