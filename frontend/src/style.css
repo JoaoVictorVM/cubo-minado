@@ -332,31 +332,77 @@ body {
     top: 24px;
     left: 50%;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    padding: 10px 22px;
+    align-items: stretch;
+    gap: 26px;
+    padding: 10px 20px;
     transform: translateX(-50%);
     border: 1px solid var(--surface-raised);
-    border-radius: 6px;
+    border-radius: 8px;
     background: var(--panel-bg);
-    text-align: center;
 }
 
 #game-status[hidden] {
     display: none;
 }
 
-.status-label {
+.hud-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 76px;
+}
+
+.hud-label {
     color: var(--fg-dim);
     font-size: 10px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
 }
 
-.status-value {
+.hud-value {
     font-family: var(--data);
-    font-size: 14px;
+    font-size: 24px;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+}
+
+.hud-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-left: 26px;
+    border-left: 1px solid var(--surface-raised);
+}
+
+.hud-button {
+    padding: 7px 14px;
+    border: 1px solid var(--surface-raised);
+    border-radius: 5px;
+    background: transparent;
+    color: var(--panel-fg);
+    font-family: var(--display);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color 120ms ease, background-color 120ms ease;
+}
+
+.hud-button:hover {
+    border-color: var(--accent);
+    background: var(--surface);
+}
+
+.hud-button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hud-button {
+        transition: none;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
