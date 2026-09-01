@@ -38,8 +38,12 @@ export interface RenderFace {
 }
 
 export interface RenderBoard {
+  difficulty: string;
   boardSize: number;
   faces: RenderFace[];
+  result?: string;
+  startedAt?: number | null;
+  endedAt?: number | null;
 }
 
 function drawTexture(key: string, paint: (ctx: CanvasRenderingContext2D, size: number) => void): Texture {

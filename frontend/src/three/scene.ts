@@ -21,7 +21,11 @@ export interface CubeScene {
   dispose(): void;
 }
 
-export function createCubeScene(container: HTMLElement, board: RenderBoard): CubeScene {
+export function createCubeScene(
+  container: HTMLElement,
+  board: RenderBoard,
+  onBoardChange?: (board: RenderBoard) => void,
+): CubeScene {
   const scene = new Scene();
 
   const camera = new PerspectiveCamera(50, 1, 0.1, 100);
@@ -65,6 +69,7 @@ export function createCubeScene(container: HTMLElement, board: RenderBoard): Cub
     cube = buildCube(next);
     scene.add(cube.group);
     hover.setTargets(cube.raycastTargets);
+    onBoardChange?.(next);
   };
 
   mountBoard(board);

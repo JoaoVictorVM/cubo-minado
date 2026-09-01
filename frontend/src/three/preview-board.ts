@@ -46,5 +46,5 @@ export function buildCellStatePreviewBoard(): RenderBoard {
     closedCell(),
   ];
 
-  return { boardSize: PREVIEW_SIZE, faces };
+  return { difficulty: 'easy', boardSize: PREVIEW_SIZE, faces };
 }
