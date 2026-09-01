@@ -12,7 +12,7 @@ import type { RenderBoard } from './three/cell-materials';
 const DIFFICULTIES = ['easy', 'medium', 'hard'] as const;
 
 export interface DebugPanelHooks {
-  showBoard(board: RenderBoard, label: string): void;
+  showBoard(board: RenderBoard): void;
 }
 
 export function mountDebugPanel(container: HTMLElement, hooks: DebugPanelHooks): void {
@@ -84,7 +84,7 @@ export function mountDebugPanel(container: HTMLElement, hooks: DebugPanelHooks):
   const previewButton = container.querySelector('#debug-preview-cells') as HTMLButtonElement;
   previewButton.addEventListener('click', () => {
     const board = buildCellStatePreviewBoard();
-    hooks.showBoard(board, 'Prévia de estados');
+    hooks.showBoard(board);
     output.classList.remove('error');
     output.textContent = 'Prévia de estados renderizada na face frontal do cubo.';
   });

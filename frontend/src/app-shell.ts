@@ -1,4 +1,5 @@
 import { NewGame } from '../wailsjs/go/main/App';
+import { mountHud, type Hud } from './hud';
 import { mountMenu, type DifficultyOption } from './menu';
 import type { RenderBoard } from './three/cell-materials';
 import { createCubeScene, type CubeScene } from './three/scene';
@@ -10,35 +11,53 @@ export interface AppShellContainers {
 }
 
 export interface AppShellHandle {
-  showBoard(board: RenderBoard, label: string): void;
+  showBoard(board: RenderBoard): void;
 }
 
 export function mountAppShell(containers: AppShellContainers): AppShellHandle {
   let scene: CubeScene | null = null;
+  let current: RenderBoard | null = null;
 
-  const showBoard = (board: RenderBoard, label: string) => {
+  const onBoardChange = (board: RenderBoard) => {
+    current = board;
+    hud.update(board);
+  };
+
+  const showBoard = (board: RenderBoard) => {
     menu.hide();
     containers.scene.hidden = false;
+    containers.status.hidden = false;
 
     if (scene) {
       scene.setBoard(board);
     } else {
-      scene = createCubeScene(containers.scene, board);
+      scene = createCubeScene(containers.scene, board, onBoardChange);
     }
     scene.start();
-
-    containers.status.innerHTML = `
-      <span class="status-label">Tabuleiro gerado</span>
-      <span class="status-value">${label} · ${board.boardSize}×${board.boardSize} por face</span>
-    `;
-    containers.status.hidden = false;
   };
 
   const startMatch = async (option: DifficultyOption) => {
-    const board = await NewGame(option.value);
-    showBoard(board, option.label);
+    showBoard(await NewGame(option.value));
   };
 
+  const restart = () => {
+    if (!current) {
+      return;
+    }
+    void NewGame(current.difficulty)
+      .then(showBoard)
+      .catch((err: unknown) => {
+        console.error('Não foi possível reiniciar a partida:', err);
+      });
+  };
+
+  const returnToMenu = () => {
+    containers.scene.hidden = true;
+    containers.status.hidden = true;
+    menu.show();
+  };
+
+  const hud: Hud = mountHud(containers.status, { onRestart: restart, onMenu: returnToMenu });
   const menu = mountMenu(containers.menu, startMatch);
 
   containers.scene.hidden = true;
