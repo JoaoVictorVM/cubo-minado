@@ -8,6 +8,7 @@ export interface HudActions {
 
 export interface Hud {
   update(board: RenderBoard): void;
+  setActionsHidden(hidden: boolean): void;
   dispose(): void;
 }
 
@@ -36,7 +37,7 @@ function countFlags(board: RenderBoard): number {
   return flags;
 }
 
-function elapsedSeconds(board: RenderBoard): number {
+export function elapsedSeconds(board: RenderBoard): number {
   if (board.startedAt === undefined || board.startedAt === null) {
     return 0;
   }
@@ -72,6 +73,7 @@ export function mountHud(container: HTMLElement, actions: HudActions): Hud {
 
   const minesSlot = container.querySelector('#hud-mines') as HTMLSpanElement;
   const timerSlot = container.querySelector('#hud-timer') as HTMLSpanElement;
+  const actionsRow = container.querySelector('.hud-actions') as HTMLDivElement;
 
   (container.querySelector('#hud-restart') as HTMLButtonElement).addEventListener(
     'click',
@@ -111,6 +113,9 @@ export function mountHud(container: HTMLElement, actions: HudActions): Hud {
       } else {
         stopTicking();
       }
+    },
+    setActionsHidden(hidden) {
+      actionsRow.hidden = hidden;
     },
     dispose() {
       stopTicking();
